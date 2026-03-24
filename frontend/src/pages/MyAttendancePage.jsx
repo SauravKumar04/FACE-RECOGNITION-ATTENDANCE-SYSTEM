@@ -63,11 +63,9 @@ export default function MyAttendancePage() {
                 { label: "Present", value: data.summary.present, icon: CheckCircle2, color: "text-green-600 bg-green-50" },
                 { label: "Late", value: data.summary.late, icon: AlertTriangle, color: "text-amber-600 bg-amber-50" },
                 { label: "Total Hours", value: `${data.summary.totalWorkingHours}h`, icon: Clock, color: "text-purple-600 bg-purple-50" },
-              ].map(({ label, value, icon: Icon, color }) => (
+              ].map(({ label, value, color }) => (
                 <div key={label} className="bg-white rounded-2xl border border-slate-100 shadow-sm p-4">
-                  <div className={`w-9 h-9 rounded-xl flex items-center justify-center mb-3 ${color}`}>
-                    <Icon size={18} />
-                  </div>
+                  <div className={`w-9 h-9 rounded-xl mb-3 ${color}`} />
                   <p className="text-2xl font-bold text-slate-800">{value}</p>
                   <p className="text-xs text-slate-500 mt-0.5">{label}</p>
                 </div>

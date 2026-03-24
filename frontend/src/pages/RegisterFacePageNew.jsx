@@ -7,7 +7,7 @@ import { CheckCircle2, Info, ScanFace, Image as ImageIcon, Lock, Eye, EyeOff, Lo
 
 export default function RegisterFacePage() {
   const { user } = useAuth();
-  const { showSuccess, showError, showInfo } = useToast();
+  const { showSuccess, showError } = useToast();
   const [loading, setLoading] = useState(false);
   const [faceData, setFaceData] = useState(null);
   const [showVerification, setShowVerification] = useState(false);

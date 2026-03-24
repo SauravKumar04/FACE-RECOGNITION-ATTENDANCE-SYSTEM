@@ -115,6 +115,15 @@ router.post("/:id/register-face", protect, async (req, res) => {
         image,
       }, { timeout: 30000 });
     } catch (axiosError) {
+      const status = axiosError.response?.status;
+      const remoteMessage = axiosError.response?.data?.message;
+      if (status && status < 500) {
+        return res.status(status).json({
+          success: false,
+          message: remoteMessage || "Face registration failed",
+        });
+      }
+
       console.error("Python service error:", axiosError.message);
       return res.status(503).json({ 
         success: false, 

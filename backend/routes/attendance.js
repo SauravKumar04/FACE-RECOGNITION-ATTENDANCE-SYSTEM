@@ -7,7 +7,13 @@ const { protect, adminOnly } = require("../middleware/auth");
 const router = express.Router();
 const PYTHON_URL = process.env.PYTHON_SERVICE_URL || "http://localhost:5001";
 
-const getTodayDate = () => new Date().toISOString().split("T")[0];
+const getTodayDate = () => {
+  const now = new Date();
+  const year = now.getFullYear();
+  const month = String(now.getMonth() + 1).padStart(2, "0");
+  const day = String(now.getDate()).padStart(2, "0");
+  return `${year}-${month}-${day}`;
+};
 
 // POST /api/attendance/mark - Mark attendance via face recognition
 router.post("/mark", protect, async (req, res) => {
@@ -28,6 +34,14 @@ router.post("/mark", protect, async (req, res) => {
     try {
       pyResponse = await axios.post(`${PYTHON_URL}/recognize`, { image }, { timeout: 30000 });
     } catch (axiosError) {
+      const status = axiosError.response?.status;
+      const remoteMessage = axiosError.response?.data?.message;
+      if (status && status < 500) {
+        return res.status(status).json({
+          success: false,
+          message: remoteMessage || "Face recognition failed",
+        });
+      }
       console.error("Python service error:", axiosError.message);
       return res.status(503).json({
         success: false,
@@ -319,7 +333,7 @@ router.get("/student-today/:employeeId", protect, async (req, res) => {
       return res.status(403).json({ success: false, message: "Unauthorized" });
     }
 
-    const today = new Date().toISOString().split("T")[0];
+    const today = getTodayDate();
     const record = await Attendance.findOne({ employeeId, date: today });
 
     res.json({

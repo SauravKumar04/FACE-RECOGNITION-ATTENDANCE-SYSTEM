@@ -28,7 +28,7 @@ export default function Layout() {
 
   const filtered = navItems.filter((i) => i.roles.includes(user?.role));
 
-  const Sidebar = ({ mobile = false }) => (
+  const renderSidebar = (mobile = false) => (
     <div className={`flex flex-col h-full bg-slate-900 text-white ${mobile ? "" : "w-64"}`}>
       {/* Logo */}
       <div className="flex items-center gap-3 px-6 py-5 border-b border-slate-700">
@@ -48,10 +48,10 @@ export default function Layout() {
 
       {/* Nav */}
       <nav className="flex-1 px-3 py-4 space-y-0.5 overflow-y-auto">
-        {filtered.map(({ to, icon: Icon, label }) => (
+        {filtered.map((item) => (
           <NavLink
-            key={to}
-            to={to}
+            key={item.to}
+            to={item.to}
             onClick={() => setSidebarOpen(false)}
             className={({ isActive }) =>
               `flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all group ${
@@ -61,8 +61,8 @@ export default function Layout() {
               }`
             }
           >
-            <Icon size={18} />
-            <span className="flex-1">{label}</span>
+            <item.icon size={18} />
+            <span className="flex-1">{item.label}</span>
             <ChevronRight size={14} className="opacity-0 group-hover:opacity-100 transition-opacity" />
           </NavLink>
         ))}
@@ -94,7 +94,7 @@ export default function Layout() {
     <div className="flex h-screen bg-slate-50 overflow-hidden">
       {/* Desktop Sidebar */}
       <div className="hidden md:flex flex-col w-64 flex-shrink-0 shadow-xl">
-        <Sidebar />
+        {renderSidebar()}
       </div>
 
       {/* Mobile Sidebar Overlay */}
@@ -102,7 +102,7 @@ export default function Layout() {
         <div className="fixed inset-0 z-50 flex md:hidden">
           <div className="fixed inset-0 bg-black/50" onClick={() => setSidebarOpen(false)} />
           <div className="relative w-72 flex-shrink-0">
-            <Sidebar mobile />
+            {renderSidebar(true)}
           </div>
         </div>
       )}

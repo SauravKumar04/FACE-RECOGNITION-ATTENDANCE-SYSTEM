@@ -5,6 +5,14 @@ const { protect, adminOnly } = require("../middleware/auth");
 
 const router = express.Router();
 
+const getTodayDate = () => {
+  const now = new Date();
+  const year = now.getFullYear();
+  const month = String(now.getMonth() + 1).padStart(2, "0");
+  const day = String(now.getDate()).padStart(2, "0");
+  return `${year}-${month}-${day}`;
+};
+
 // Get all employees (admin only)
 router.get("/employees", protect, adminOnly, async (req, res) => {
   try {
@@ -153,12 +161,15 @@ router.get("/batch-summary", protect, adminOnly, async (req, res) => {
     ]);
 
     // Add today's attendance stats
-    const today = new Date().toISOString().split("T")[0];
+    const today = getTodayDate();
     const batchesSummary = await Promise.all(
       batches.map(async (batch) => {
+        const batchEmployees = await Employee.find({ batch: batch._id }).select("employeeId");
+        const batchEmployeeIds = batchEmployees.map((e) => e.employeeId);
         const attendanceToday = await Attendance.countDocuments({
           date: today,
           status: { $ne: "absent" },
+          employeeId: { $in: batchEmployeeIds },
         });
         return {
           ...batch,
@@ -179,7 +190,7 @@ router.get("/batch-summary", protect, adminOnly, async (req, res) => {
 // Get dashboard stats (admin only)
 router.get("/dashboard-stats", protect, adminOnly, async (req, res) => {
   try {
-    const today = new Date().toISOString().split("T")[0];
+    const today = getTodayDate();
 
     const [
       totalEmployees,

@@ -1,6 +1,7 @@
 import { useRef, useState, useCallback } from "react";
 import Webcam from "react-webcam";
-import { Camera, RefreshCw, Loader2 } from "lucide-react";
+import { FiCamera, FiRefreshCw } from "react-icons/fi";
+import { ImSpinner8 } from "react-icons/im";
 
 const videoConstraints = {
   width: 640,
@@ -28,18 +29,16 @@ export default function WebcamCapture({ onCapture, loading = false, label = "Cap
 
   if (camError) {
     return (
-      <div className="flex flex-col items-center justify-center bg-slate-100 rounded-2xl p-12 gap-3">
-        <Camera size={48} className="text-slate-400" />
-        <p className="text-slate-600 font-medium">Camera not accessible</p>
-        <p className="text-sm text-slate-500">Please allow camera permissions and reload</p>
+      <div className="empty-state">
+        <p>Camera not accessible.</p>
+        <p>Please allow camera permission and reload this page.</p>
       </div>
     );
   }
 
   return (
-    <div className="flex flex-col items-center gap-4">
-      {/* Camera view */}
-      <div className="relative w-full max-w-sm rounded-2xl overflow-hidden bg-black shadow-xl">
+    <div className="card" style={{ maxWidth: "560px", padding: "14px" }}>
+      <div className="webcam-card" style={{ position: "relative" }}>
         {!captured ? (
           <>
             <Webcam
@@ -51,20 +50,10 @@ export default function WebcamCapture({ onCapture, loading = false, label = "Cap
               className="w-full"
               mirrored
             />
-            {/* Face guide overlay */}
-            <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-              <div className="w-48 h-56 border-2 border-blue-400 rounded-full opacity-70">
-                {/* Corner markers */}
-                <div className="absolute top-0 left-0 w-5 h-5 border-t-2 border-l-2 border-blue-400 rounded-tl-sm" />
-                <div className="absolute top-0 right-0 w-5 h-5 border-t-2 border-r-2 border-blue-400 rounded-tr-sm" />
-                <div className="absolute bottom-0 left-0 w-5 h-5 border-b-2 border-l-2 border-blue-400 rounded-bl-sm" />
-                <div className="absolute bottom-0 right-0 w-5 h-5 border-b-2 border-r-2 border-blue-400 rounded-br-sm" />
-              </div>
-              {/* Scan line */}
-              <div className="absolute scan-line left-0 right-0 h-0.5 bg-blue-400/60 shadow-[0_0_8px_2px_rgba(96,165,250,0.5)]" />
+            <div className="webcam-overlay">
+              <div className="webcam-guide" />
             </div>
-            {/* Label */}
-            <div className="absolute bottom-3 left-1/2 -translate-x-1/2 bg-black/50 text-white text-xs px-3 py-1 rounded-full backdrop-blur-sm">
+            <div className="webcam-label">
               Position face in the oval
             </div>
           </>
@@ -73,38 +62,39 @@ export default function WebcamCapture({ onCapture, loading = false, label = "Cap
         )}
       </div>
 
-      {/* Action buttons */}
-      <div className="flex gap-3 w-full max-w-sm">
+      <div className="row-actions" style={{ width: "100%" }}>
         {!captured ? (
           <button
             onClick={capture}
-            className="flex-1 flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 rounded-xl transition-all shadow-md hover:shadow-lg active:scale-95"
+            className="btn"
+            style={{ width: "100%" }}
           >
-            <Camera size={18} />
+            <FiCamera size={17} />
             Capture Photo
           </button>
         ) : (
           <>
             <button
               onClick={retake}
-              className="flex items-center justify-center gap-2 bg-slate-100 hover:bg-slate-200 text-slate-700 font-medium py-3 px-5 rounded-xl transition-all"
+              className="btn btn-ghost"
             >
-              <RefreshCw size={16} />
+              <FiRefreshCw size={16} />
               Retake
             </button>
             <button
               onClick={submit}
               disabled={loading}
-              className="flex-1 flex items-center justify-center gap-2 bg-green-600 hover:bg-green-700 disabled:opacity-70 disabled:cursor-not-allowed text-white font-semibold py-3 rounded-xl transition-all shadow-md"
+              className="btn"
+              style={{ flex: 1 }}
             >
               {loading ? (
                 <>
-                  <Loader2 size={16} className="animate-spin" />
+                  <ImSpinner8 size={14} className="spin" />
                   Processing...
                 </>
               ) : (
                 <>
-                  <Camera size={16} />
+                  <FiCamera size={16} />
                   {label}
                 </>
               )}
