@@ -5,6 +5,7 @@ import { ToastContainer } from "react-toastify";
 import { FiCamera, FiClipboard, FiGrid, FiLogOut, FiShield, FiUser } from "react-icons/fi";
 import LoginPage from "./pages/LoginPage";
 import RegisterPage from "./pages/RegisterPage";
+import LandingPage from "./pages/LandingPage";
 import DashboardPage from "./pages/DashboardPage";
 import MarkAttendancePage from "./pages/MarkAttendancePage";
 import AttendanceReportPage from "./pages/AttendanceReportPage";
@@ -101,7 +102,14 @@ function Shell({ children }) {
 function AppRoutes() {
   return (
     <Routes>
-      <Route path="/" element={<Navigate to="/login" replace />} />
+      <Route
+        path="/"
+        element={
+          <PublicOnlyRoute>
+            <LandingPage />
+          </PublicOnlyRoute>
+        }
+      />
       <Route
         path="/login"
         element={
@@ -194,7 +202,7 @@ function AppRoutes() {
       <Route
         path="*"
         element={
-          <Navigate to="/login" replace />
+          <Navigate to="/" replace />
         }
       />
     </Routes>
